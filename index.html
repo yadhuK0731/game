@@ -1,240 +1,444 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moo Games - Cow-tastic Fun!</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Nunito:wght@400;600;700&display=swap');
-        
-        .cow-font { font-family: 'Fredoka One', cursive; }
-        .body-font { font-family: 'Nunito', sans-serif; }
-        
-        .cow-spot {
-            background: radial-gradient(ellipse 30px 20px at center, #000 40%, transparent 40%);
+      @import url("https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Nunito:wght@400;600;700&display=swap");
+
+      .cow-font {
+        font-family: "Fredoka One", cursive;
+      }
+      .body-font {
+        font-family: "Nunito", sans-serif;
+      }
+
+      .cow-spot {
+        background: radial-gradient(
+          ellipse 30px 20px at center,
+          #000 40%,
+          transparent 40%
+        );
+      }
+
+      .bounce-cow {
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
         }
-        
-        .bounce-cow {
-            animation: bounce 2s infinite;
+        40% {
+          transform: translateY(-10px);
         }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
+        60% {
+          transform: translateY(-5px);
         }
-        
-        .game-card:hover {
-            transform: translateY(-5px);
-            transition: transform 0.3s ease;
-        }
+      }
+
+      .game-card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+      }
     </style>
-</head>
-<body class="bg-gradient-to-b from-green-300 via-green-200 to-blue-200 min-h-screen body-font">
+  </head>
+  <body
+    class="bg-gradient-to-b from-green-300 via-green-200 to-blue-200 min-h-screen body-font"
+  >
     <!-- Header -->
     <header class="bg-white shadow-lg border-b-4 border-green-400">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="text-6xl bounce-cow">🐄</div>
-                    <div>
-                        <h1 class="text-4xl font-bold text-green-800 cow-font">Moo Games</h1>
-                        <p class="text-green-600 font-semibold">Where cows have all the fun!</p>
-                    </div>
-                </div>
-                <div class="hidden md:flex items-center space-x-6">
-                    <span class="text-green-700 font-semibold">🏆 High Score: <span id="totalScore">0</span></span>
-                    <span class="text-green-700 font-semibold">🥛 Milk Collected: <span id="totalMilk">0</span></span>
-                </div>
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="text-6xl bounce-cow">🐄</div>
+            <div>
+              <h1 class="text-4xl font-bold text-green-800 cow-font">
+                Moo Games
+              </h1>
+              <p class="text-green-600 font-semibold">
+                Where cows have all the fun!
+              </p>
             </div>
+          </div>
+          <div class="hidden md:flex items-center space-x-6">
+            <span class="text-green-700 font-semibold"
+              >🏆 High Score: <span id="totalScore">0</span></span
+            >
+            <span class="text-green-700 font-semibold"
+              >🥛 Milk Collected: <span id="totalMilk">0</span></span
+            >
+          </div>
         </div>
+      </div>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-8">
-        <!-- Welcome Section -->
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-green-800 mb-4 cow-font">Welcome to the Pasture!</h2>
-            <div id="playerGreeting" class="text-xl font-semibold text-green-600 mb-4">Getting ready for some cow-tastic fun! 🐄</div>
-            <p class="text-lg text-green-700 max-w-2xl mx-auto">
-                Join our friendly cows for some udderly amazing games! Click on any game below to start having fun.
+      <!-- Welcome Section -->
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-green-800 mb-4 cow-font">
+          Welcome to the Pasture!
+        </h2>
+        <div
+          id="playerGreeting"
+          class="text-xl font-semibold text-green-600 mb-4"
+        >
+          Getting ready for some cow-tastic fun! 🐄
+        </div>
+        <p class="text-lg text-green-700 max-w-2xl mx-auto">
+          Join our friendly cows for some udderly amazing games! Click on any
+          game below to start having fun.
+        </p>
+      </div>
+
+      <!-- Games Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <!-- Cow Farm Game -->
+        <div
+          class="game-card bg-white rounded-2xl shadow-xl p-6 border-4 border-yellow-300"
+        >
+          <div class="text-center mb-4">
+            <div class="text-6xl mb-3">🐄</div>
+            <h3 class="text-2xl font-bold text-green-800 cow-font mb-2">
+              Cow Farm Empire
+            </h3>
+            <p class="text-green-600 mb-4">Build your dairy empire!</p>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-2 gap-2 mb-4 text-sm">
+            <div class="bg-green-50 p-2 rounded text-center">
+              <div class="font-bold text-green-800">🥛 Milk</div>
+              <div id="cowClickerScore">0</div>
+            </div>
+            <div class="bg-blue-50 p-2 rounded text-center">
+              <div class="font-bold text-blue-800">🐄 Cows</div>
+              <div id="cowCount">1</div>
+            </div>
+            <div class="bg-yellow-50 p-2 rounded text-center">
+              <div class="font-bold text-yellow-800">⚡ Per Click</div>
+              <div id="milkPerClick">1</div>
+            </div>
+            <div class="bg-purple-50 p-2 rounded text-center">
+              <div class="font-bold text-purple-800">🔄 Per Sec</div>
+              <div id="milkPerSecond">0</div>
+            </div>
+          </div>
+
+          <!-- Main cow button -->
+          <button
+            id="cowClickerBtn"
+            class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl text-xl transition-all duration-200 transform hover:scale-105 mb-4"
+          >
+            Milk the Cows! 🐄
+          </button>
+
+          <!-- Upgrades -->
+          <div class="space-y-2">
+            <button
+              id="buyMilkingUpgrade"
+              class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors"
+            >
+              Better Milking (+1 per click) - Cost:
+              <span id="milkingCost">10</span> 🥛
+            </button>
+            <button
+              id="buyCowUpgrade"
+              class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors"
+            >
+              Buy Cow (+1/sec) - Cost: <span id="cowCost">50</span> 🥛
+            </button>
+            <button
+              id="buyFarmUpgrade"
+              class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors"
+            >
+              Upgrade Farm (x2 production) - Cost:
+              <span id="farmCost">200</span> 🥛
+            </button>
+          </div>
+        </div>
+
+        <!-- Ninja Cow Runner Game -->
+        <div
+          class="game-card bg-white rounded-2xl shadow-xl p-6 border-4 border-red-300"
+        >
+          <div class="text-center mb-4">
+            <div class="text-6xl mb-3">🥷</div>
+            <h3 class="text-2xl font-bold text-green-800 cow-font mb-2">
+              Ninja Cow Runner
+            </h3>
+            <p class="text-green-600 mb-4">Run through bamboo forests!</p>
+          </div>
+
+          <!-- Game Canvas -->
+          <div
+            class="bg-gradient-to-r from-green-400 to-green-600 rounded-lg mb-4 relative overflow-hidden"
+            style="height: 200px"
+            id="gameCanvas"
+          >
+            <!-- Game elements will be positioned here -->
+            <div
+              id="ninjaCow"
+              class="absolute bottom-4 left-4 text-3xl transition-all duration-200"
+            >
+              🐄
+            </div>
+            <div id="gameElements" class="absolute inset-0"></div>
+          </div>
+
+          <!-- Game Stats -->
+          <div class="grid grid-cols-2 gap-2 mb-4 text-sm">
+            <div class="bg-red-50 p-2 rounded text-center">
+              <div class="font-bold text-red-800">🏃 Distance</div>
+              <div id="runnerDistance">0</div>
+            </div>
+            <div class="bg-blue-50 p-2 rounded text-center">
+              <div class="font-bold text-blue-800">🥛 Bottles</div>
+              <div id="runnerBottles">0</div>
+            </div>
+          </div>
+
+          <!-- Game Controls -->
+          <div class="space-y-2">
+            <button
+              id="jumpBtn"
+              class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+            >
+              JUMP! 🦘
+            </button>
+            <button
+              id="startRunnerBtn"
+              class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              Start Game
+            </button>
+          </div>
+
+          <div class="text-center mt-2 text-sm text-gray-600">
+            Press SPACE or click JUMP to avoid obstacles!
+          </div>
+        </div>
+
+        <!-- Memory Game -->
+        <div
+          class="game-card bg-white rounded-2xl shadow-xl p-6 border-4 border-pink-300"
+        >
+          <div class="text-center mb-4">
+            <div class="text-6xl mb-3">🧠</div>
+            <h3 class="text-2xl font-bold text-green-800 cow-font mb-2">
+              Cow Memory
+            </h3>
+            <p class="text-green-600 mb-4">Match the cow pairs!</p>
+          </div>
+          <div class="grid grid-cols-4 gap-2 mb-4" id="memoryGame">
+            <!-- Memory cards will be generated here -->
+          </div>
+          <div class="text-center">
+            <div class="text-sm font-semibold text-green-700 mb-2">
+              Matches: <span id="memoryScore">0</span>/8
+            </div>
+            <button
+              id="resetMemory"
+              class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg"
+            >
+              New Game
+            </button>
+          </div>
+        </div>
+
+        <!-- Cow Quiz -->
+        <div
+          class="game-card bg-white rounded-2xl shadow-xl p-6 border-4 border-blue-300"
+        >
+          <div class="text-center mb-4">
+            <div class="text-6xl mb-3">❓</div>
+            <h3 class="text-2xl font-bold text-green-800 cow-font mb-2">
+              Cow Quiz
+            </h3>
+            <p class="text-green-600 mb-4">Test your cow knowledge!</p>
+          </div>
+          <div id="quizContent">
+            <div class="text-center mb-4">
+              <div class="text-lg font-semibold text-green-700">
+                Score: <span id="quizScore">0</span>/5
+              </div>
+            </div>
+            <div
+              id="quizQuestion"
+              class="text-center mb-4 font-semibold text-green-800"
+            ></div>
+            <div id="quizOptions" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fun Facts Section -->
+      <div
+        class="bg-white rounded-2xl shadow-xl p-8 border-4 border-yellow-300"
+      >
+        <h3 class="text-2xl font-bold text-green-800 cow-font mb-6 text-center">
+          🐄 Fun Cow Facts! 🐄
+        </h3>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="text-center p-4 bg-green-50 rounded-xl">
+            <div class="text-3xl mb-2">🥛</div>
+            <p class="text-green-700 font-semibold">
+              A cow can produce up to 7 gallons of milk per day!
             </p>
+          </div>
+          <div class="text-center p-4 bg-blue-50 rounded-xl">
+            <div class="text-3xl mb-2">👥</div>
+            <p class="text-green-700 font-semibold">
+              Cows have best friends and get stressed when separated!
+            </p>
+          </div>
+          <div class="text-center p-4 bg-pink-50 rounded-xl">
+            <div class="text-3xl mb-2">🎵</div>
+            <p class="text-green-700 font-semibold">
+              Cows produce more milk when listening to music!
+            </p>
+          </div>
         </div>
-
-        <!-- Games Grid -->
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            <!-- Cow Farm Game -->
-            <div class="game-card bg-white rounded-2xl shadow-xl p-6 border-4 border-yellow-300">
-                <div class="text-center mb-4">
-                    <div class="text-6xl mb-3">🐄</div>
-                    <h3 class="text-2xl font-bold text-green-800 cow-font mb-2">Cow Farm Empire</h3>
-                    <p class="text-green-600 mb-4">Build your dairy empire!</p>
-                </div>
-                
-                <!-- Stats -->
-                <div class="grid grid-cols-2 gap-2 mb-4 text-sm">
-                    <div class="bg-green-50 p-2 rounded text-center">
-                        <div class="font-bold text-green-800">🥛 Milk</div>
-                        <div id="cowClickerScore">0</div>
-                    </div>
-                    <div class="bg-blue-50 p-2 rounded text-center">
-                        <div class="font-bold text-blue-800">🐄 Cows</div>
-                        <div id="cowCount">1</div>
-                    </div>
-                    <div class="bg-yellow-50 p-2 rounded text-center">
-                        <div class="font-bold text-yellow-800">⚡ Per Click</div>
-                        <div id="milkPerClick">1</div>
-                    </div>
-                    <div class="bg-purple-50 p-2 rounded text-center">
-                        <div class="font-bold text-purple-800">🔄 Per Sec</div>
-                        <div id="milkPerSecond">0</div>
-                    </div>
-                </div>
-
-                <!-- Main cow button -->
-                <button id="cowClickerBtn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl text-xl transition-all duration-200 transform hover:scale-105 mb-4">
-                    Milk the Cows! 🐄
-                </button>
-
-                <!-- Upgrades -->
-                <div class="space-y-2">
-                    <button id="buyMilkingUpgrade" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
-                        Better Milking (+1 per click) - Cost: <span id="milkingCost">10</span> 🥛
-                    </button>
-                    <button id="buyCowUpgrade" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
-                        Buy Cow (+1/sec) - Cost: <span id="cowCost">50</span> 🥛
-                    </button>
-                    <button id="buyFarmUpgrade" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
-                        Upgrade Farm (x2 production) - Cost: <span id="farmCost">200</span> 🥛
-                    </button>
-                </div>
-            </div>
-
-            <!-- Ninja Cow Runner Game -->
-            <div class="game-card bg-white rounded-2xl shadow-xl p-6 border-4 border-red-300">
-                <div class="text-center mb-4">
-                    <div class="text-6xl mb-3">🥷</div>
-                    <h3 class="text-2xl font-bold text-green-800 cow-font mb-2">Ninja Cow Runner</h3>
-                    <p class="text-green-600 mb-4">Run through bamboo forests!</p>
-                </div>
-                
-                <!-- Game Canvas -->
-                <div class="bg-gradient-to-r from-green-400 to-green-600 rounded-lg mb-4 relative overflow-hidden" style="height: 200px;" id="gameCanvas">
-                    <!-- Game elements will be positioned here -->
-                    <div id="ninjaCow" class="absolute bottom-4 left-4 text-3xl transition-all duration-200">🐄</div>
-                    <div id="gameElements" class="absolute inset-0"></div>
-                </div>
-                
-                <!-- Game Stats -->
-                <div class="grid grid-cols-2 gap-2 mb-4 text-sm">
-                    <div class="bg-red-50 p-2 rounded text-center">
-                        <div class="font-bold text-red-800">🏃 Distance</div>
-                        <div id="runnerDistance">0</div>
-                    </div>
-                    <div class="bg-blue-50 p-2 rounded text-center">
-                        <div class="font-bold text-blue-800">🥛 Bottles</div>
-                        <div id="runnerBottles">0</div>
-                    </div>
-                </div>
-                
-                <!-- Game Controls -->
-                <div class="space-y-2">
-                    <button id="jumpBtn" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition-colors">
-                        JUMP! 🦘
-                    </button>
-                    <button id="startRunnerBtn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                        Start Game
-                    </button>
-                </div>
-                
-                <div class="text-center mt-2 text-sm text-gray-600">
-                    Press SPACE or click JUMP to avoid obstacles!
-                </div>
-            </div>
-
-            <!-- Memory Game -->
-            <div class="game-card bg-white rounded-2xl shadow-xl p-6 border-4 border-pink-300">
-                <div class="text-center mb-4">
-                    <div class="text-6xl mb-3">🧠</div>
-                    <h3 class="text-2xl font-bold text-green-800 cow-font mb-2">Cow Memory</h3>
-                    <p class="text-green-600 mb-4">Match the cow pairs!</p>
-                </div>
-                <div class="grid grid-cols-4 gap-2 mb-4" id="memoryGame">
-                    <!-- Memory cards will be generated here -->
-                </div>
-                <div class="text-center">
-                    <div class="text-sm font-semibold text-green-700 mb-2">Matches: <span id="memoryScore">0</span>/8</div>
-                    <button id="resetMemory" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg">
-                        New Game
-                    </button>
-                </div>
-            </div>
-
-            <!-- Cow Quiz -->
-            <div class="game-card bg-white rounded-2xl shadow-xl p-6 border-4 border-blue-300">
-                <div class="text-center mb-4">
-                    <div class="text-6xl mb-3">❓</div>
-                    <h3 class="text-2xl font-bold text-green-800 cow-font mb-2">Cow Quiz</h3>
-                    <p class="text-green-600 mb-4">Test your cow knowledge!</p>
-                </div>
-                <div id="quizContent">
-                    <div class="text-center mb-4">
-                        <div class="text-lg font-semibold text-green-700">Score: <span id="quizScore">0</span>/5</div>
-                    </div>
-                    <div id="quizQuestion" class="text-center mb-4 font-semibold text-green-800"></div>
-                    <div id="quizOptions" class="space-y-2"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Fun Facts Section -->
-        <div class="bg-white rounded-2xl shadow-xl p-8 border-4 border-yellow-300">
-            <h3 class="text-2xl font-bold text-green-800 cow-font mb-6 text-center">🐄 Fun Cow Facts! 🐄</h3>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="text-center p-4 bg-green-50 rounded-xl">
-                    <div class="text-3xl mb-2">🥛</div>
-                    <p class="text-green-700 font-semibold">A cow can produce up to 7 gallons of milk per day!</p>
-                </div>
-                <div class="text-center p-4 bg-blue-50 rounded-xl">
-                    <div class="text-3xl mb-2">👥</div>
-                    <p class="text-green-700 font-semibold">Cows have best friends and get stressed when separated!</p>
-                </div>
-                <div class="text-center p-4 bg-pink-50 rounded-xl">
-                    <div class="text-3xl mb-2">🎵</div>
-                    <p class="text-green-700 font-semibold">Cows produce more milk when listening to music!</p>
-                </div>
-            </div>
-        </div>
+      </div>
     </main>
 
     <!-- Footer -->
     <footer class="bg-green-800 text-white py-8 mt-12">
-        <div class="container mx-auto px-6 text-center">
-            <div class="text-4xl mb-4">🐄🌾🐄</div>
-            <p class="text-lg cow-font">Thanks for visiting Moo Games!</p>
-            <p class="text-green-200 mt-2">Have an udderly fantastic day!</p>
-        </div>
+      <div class="container mx-auto px-6 text-center">
+        <div class="text-4xl mb-4">🐄🌾🐄</div>
+        <p class="text-lg cow-font">Thanks for visiting Moo Games!</p>
+        <p class="text-green-200 mt-2">Have an udderly fantastic day!</p>
+      </div>
     </footer>
 
     <script>
-        // Player name
-        let playerName = '';
-        
-        // Ask for player name when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            showNameDialog();
-        });
+      // Supabase configuration
+      // TODO: Replace these with your actual Supabase credentials
+      const SUPABASE_URL = "YOUR_SUPABASE_URL";
+      const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 
-        function showNameDialog() {
-            // Create modal overlay
-            const overlay = document.createElement('div');
-            overlay.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-            
-            // Create modal content
-            const modal = document.createElement('div');
-            modal.className = 'bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl border-4 border-green-400';
-            modal.innerHTML = `
+      const supabase = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      // Database functions
+      async function loadPlayerData(playerName) {
+        try {
+          const { data, error } = await supabase
+            .from("players")
+            .select("*")
+            .eq("player_name", playerName)
+            .single();
+
+          if (error && error.code !== "PGRST116") {
+            // PGRST116 = no rows returned
+            console.error("Error loading player data:", error);
+            return null;
+          }
+
+          return data;
+        } catch (error) {
+          console.error("Error loading player data:", error);
+          return null;
+        }
+      }
+
+      async function savePlayerData(playerName, gameStateData) {
+        try {
+          const playerData = {
+            player_name: playerName,
+            milk: Math.floor(gameStateData.milk),
+            cows: gameStateData.cows,
+            milk_per_click: gameStateData.milkPerClick,
+            milk_per_second: gameStateData.milkPerSecond,
+            milking_upgrades: gameStateData.milkingUpgrades,
+            cow_upgrades: gameStateData.cowUpgrades,
+            farm_upgrades: gameStateData.farmUpgrades,
+            milking_cost: gameStateData.milkingCost,
+            cow_cost: gameStateData.cowCost,
+            farm_cost: gameStateData.farmCost,
+            total_milk_collected: Math.floor(gameStateData.totalMilk),
+          };
+
+          const { data, error } = await supabase
+            .from("players")
+            .upsert(playerData, { onConflict: "player_name" })
+            .select();
+
+          if (error) {
+            console.error("Error saving player data:", error);
+            return false;
+          }
+
+          console.log("Player data saved successfully");
+          return true;
+        } catch (error) {
+          console.error("Error saving player data:", error);
+          return false;
+        }
+      }
+
+      async function createNewPlayer(playerName) {
+        try {
+          const { data, error } = await supabase
+            .from("players")
+            .insert({
+              player_name: playerName,
+              milk: 0,
+              cows: 1,
+              milk_per_click: 1,
+              milk_per_second: 0,
+              milking_upgrades: 0,
+              cow_upgrades: 0,
+              farm_upgrades: 0,
+              milking_cost: 10,
+              cow_cost: 50,
+              farm_cost: 200,
+              total_milk_collected: 0,
+            })
+            .select()
+            .single();
+
+          if (error) {
+            console.error("Error creating new player:", error);
+            return null;
+          }
+
+          return data;
+        } catch (error) {
+          console.error("Error creating new player:", error);
+          return null;
+        }
+      }
+
+      // Player name
+      let playerName = "";
+
+      // Ask for player name when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        showNameDialog();
+      });
+
+      function showNameDialog() {
+        // Create modal overlay
+        const overlay = document.createElement("div");
+        overlay.className =
+          "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+
+        // Create modal content
+        const modal = document.createElement("div");
+        modal.className =
+          "bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl border-4 border-green-400";
+        modal.innerHTML = `
                 <div class="text-center">
                     <div class="text-6xl mb-4">🐄</div>
                     <h2 class="text-2xl font-bold text-green-800 cow-font mb-4">Welcome to Moo Games!</h2>
@@ -250,54 +454,98 @@
                     </div>
                 </div>
             `;
-            
-            overlay.appendChild(modal);
-            document.body.appendChild(overlay);
-            
-            const nameInput = document.getElementById('nameInput');
-            const okBtn = document.getElementById('okBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
-            
-            // Focus on input
-            nameInput.focus();
-            
-            // Handle OK button
-            okBtn.addEventListener('click', function() {
-                const name = nameInput.value.trim();
-                if (name) {
-                    playerName = name;
-                    document.getElementById('playerGreeting').textContent = `Welcome back, ${playerName}! 🎉`;
-                } else {
-                    playerName = 'Anonymous Cow Hero';
-                    document.getElementById('playerGreeting').textContent = `Welcome back, ${playerName}! 🎉`;
-                }
-                document.body.removeChild(overlay);
-            });
-            
-            // Handle Cancel button
-            cancelBtn.addEventListener('click', function() {
-                playerName = 'Anonymous Cow Hero';
-                document.getElementById('playerGreeting').textContent = `Welcome back, ${playerName}! 🎉`;
-                document.body.removeChild(overlay);
-            });
-            
-            // Handle Enter key
-            nameInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    okBtn.click();
-                }
-            });
-        }
 
-        function showCustomAlert(title, message, emoji) {
-            // Create modal overlay
-            const overlay = document.createElement('div');
-            overlay.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-            
-            // Create modal content
-            const modal = document.createElement('div');
-            modal.className = 'bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl border-4 border-green-400';
-            modal.innerHTML = `
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        const nameInput = document.getElementById("nameInput");
+        const okBtn = document.getElementById("okBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
+
+        // Focus on input
+        nameInput.focus();
+
+        // Handle OK button
+        okBtn.addEventListener("click", async function () {
+          const name = nameInput.value.trim();
+          if (name) {
+            playerName = name;
+
+            // Show loading message
+            okBtn.textContent = "Loading...";
+            okBtn.disabled = true;
+
+            // Try to load existing player data
+            const existingData = await loadPlayerData(playerName);
+
+            if (existingData) {
+              // Load existing player data
+              gameState.milk = existingData.milk;
+              gameState.cows = existingData.cows;
+              gameState.milkPerClick = existingData.milk_per_click;
+              gameState.milkPerSecond = existingData.milk_per_second;
+              gameState.milkingUpgrades = existingData.milking_upgrades;
+              gameState.cowUpgrades = existingData.cow_upgrades;
+              gameState.farmUpgrades = existingData.farm_upgrades;
+              gameState.milkingCost = existingData.milking_cost;
+              gameState.cowCost = existingData.cow_cost;
+              gameState.farmCost = existingData.farm_cost;
+              gameState.totalMilk = existingData.total_milk_collected;
+
+              document.getElementById(
+                "playerGreeting"
+              ).textContent = `Welcome back, ${playerName}! 🎉`;
+              updateFarmDisplay();
+            } else {
+              // Create new player
+              const newPlayerData = await createNewPlayer(playerName);
+              if (newPlayerData) {
+                document.getElementById(
+                  "playerGreeting"
+                ).textContent = `Welcome to Moo Games, ${playerName}! 🐄`;
+              } else {
+                document.getElementById(
+                  "playerGreeting"
+                ).textContent = `Welcome, ${playerName}! (Offline mode) 📱`;
+              }
+            }
+          } else {
+            playerName = "Anonymous Cow Hero";
+            document.getElementById(
+              "playerGreeting"
+            ).textContent = `Welcome back, ${playerName}! 🎉`;
+          }
+          document.body.removeChild(overlay);
+        });
+
+        // Handle Cancel button
+        cancelBtn.addEventListener("click", function () {
+          playerName = "Anonymous Cow Hero";
+          document.getElementById(
+            "playerGreeting"
+          ).textContent = `Welcome back, ${playerName}! 🎉`;
+          document.body.removeChild(overlay);
+        });
+
+        // Handle Enter key
+        nameInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            okBtn.click();
+          }
+        });
+      }
+
+      function showCustomAlert(title, message, emoji) {
+        // Create modal overlay
+        const overlay = document.createElement("div");
+        overlay.className =
+          "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+
+        // Create modal content
+        const modal = document.createElement("div");
+        modal.className =
+          "bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl border-4 border-green-400";
+        modal.innerHTML = `
                 <div class="text-center">
                     <div class="text-6xl mb-4">${emoji}</div>
                     <h2 class="text-2xl font-bold text-green-800 cow-font mb-4">${title}</h2>
@@ -307,38 +555,40 @@
                     </button>
                 </div>
             `;
-            
-            overlay.appendChild(modal);
-            document.body.appendChild(overlay);
-            
-            const okBtn = document.getElementById('alertOkBtn');
-            
-            // Handle OK button
-            okBtn.addEventListener('click', function() {
-                document.body.removeChild(overlay);
-            });
-            
-            // Handle Enter key
-            document.addEventListener('keypress', function handleEnter(e) {
-                if (e.key === 'Enter') {
-                    document.body.removeChild(overlay);
-                    document.removeEventListener('keypress', handleEnter);
-                }
-            });
-            
-            // Focus on OK button
-            okBtn.focus();
-        }
 
-        function showQuizCompletionDialog(title, message, emoji) {
-            // Create modal overlay
-            const overlay = document.createElement('div');
-            overlay.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-            
-            // Create modal content
-            const modal = document.createElement('div');
-            modal.className = 'bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl border-4 border-green-400';
-            modal.innerHTML = `
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        const okBtn = document.getElementById("alertOkBtn");
+
+        // Handle OK button
+        okBtn.addEventListener("click", function () {
+          document.body.removeChild(overlay);
+        });
+
+        // Handle Enter key
+        document.addEventListener("keypress", function handleEnter(e) {
+          if (e.key === "Enter") {
+            document.body.removeChild(overlay);
+            document.removeEventListener("keypress", handleEnter);
+          }
+        });
+
+        // Focus on OK button
+        okBtn.focus();
+      }
+
+      function showQuizCompletionDialog(title, message, emoji) {
+        // Create modal overlay
+        const overlay = document.createElement("div");
+        overlay.className =
+          "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+
+        // Create modal content
+        const modal = document.createElement("div");
+        modal.className =
+          "bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl border-4 border-green-400";
+        modal.innerHTML = `
                 <div class="text-center">
                     <div class="text-6xl mb-4">${emoji}</div>
                     <h2 class="text-2xl font-bold text-green-800 cow-font mb-4">${title}</h2>
@@ -353,547 +603,676 @@
                     </div>
                 </div>
             `;
-            
-            overlay.appendChild(modal);
-            document.body.appendChild(overlay);
-            
-            const playAgainBtn = document.getElementById('quizPlayAgainBtn');
-            const cancelBtn = document.getElementById('quizCancelBtn');
-            
-            // Handle Play Again button
-            playAgainBtn.addEventListener('click', function() {
-                document.body.removeChild(overlay);
-                resetQuiz();
-            });
-            
-            // Handle Cancel button
-            cancelBtn.addEventListener('click', function() {
-                document.body.removeChild(overlay);
-            });
-            
-            // Handle Enter key (defaults to Play Again)
-            document.addEventListener('keypress', function handleEnter(e) {
-                if (e.key === 'Enter') {
-                    document.body.removeChild(overlay);
-                    resetQuiz();
-                    document.removeEventListener('keypress', handleEnter);
-                }
-            });
-            
-            // Focus on Play Again button
-            playAgainBtn.focus();
-        }
 
-        // Game state
-        let gameState = {
-            cowClicker: 0,
-            memoryMatches: 0,
-            quizScore: 0,
-            totalScore: 0,
-            totalMilk: 0,
-            // Farm game state
-            milk: 0,
-            cows: 1,
-            milkPerClick: 1,
-            milkPerSecond: 0,
-            milkingUpgrades: 0,
-            cowUpgrades: 0,
-            farmUpgrades: 0,
-            milkingCost: 10,
-            cowCost: 50,
-            farmCost: 200,
-            // Runner game state
-            runnerActive: false,
-            runnerDistance: 0,
-            runnerBottles: 0,
-            cowY: 0,
-            cowJumping: false,
-            gameSpeed: 4,
-            obstacles: [],
-            bottles: [],
-            gameLoop: null
-        };
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
 
-        // Cow Farm Empire Game
-        document.getElementById('cowClickerBtn').addEventListener('click', function() {
-            gameState.milk += gameState.milkPerClick;
-            gameState.cowClicker = gameState.milk; // Keep compatibility
-            gameState.totalMilk = gameState.milk;
-            updateFarmDisplay();
-            
-            // Add click animation with floating milk
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 100);
-            
-            // Create floating milk animation
-            createFloatingMilk(this);
+        const playAgainBtn = document.getElementById("quizPlayAgainBtn");
+        const cancelBtn = document.getElementById("quizCancelBtn");
+
+        // Handle Play Again button
+        playAgainBtn.addEventListener("click", function () {
+          document.body.removeChild(overlay);
+          resetQuiz();
         });
 
-        function createFloatingMilk(button) {
-            const milk = document.createElement('div');
-            milk.textContent = `+${gameState.milkPerClick} 🥛`;
-            milk.className = 'absolute text-green-600 font-bold pointer-events-none';
-            milk.style.left = Math.random() * 100 + 'px';
-            milk.style.top = '0px';
-            milk.style.animation = 'float-up 1s ease-out forwards';
-            button.parentElement.style.position = 'relative';
-            button.parentElement.appendChild(milk);
-            
-            setTimeout(() => milk.remove(), 1000);
-        }
+        // Handle Cancel button
+        cancelBtn.addEventListener("click", function () {
+          document.body.removeChild(overlay);
+        });
 
-        // Add floating animation CSS
-        const style = document.createElement('style');
-        style.textContent = `
+        // Handle Enter key (defaults to Play Again)
+        document.addEventListener("keypress", function handleEnter(e) {
+          if (e.key === "Enter") {
+            document.body.removeChild(overlay);
+            resetQuiz();
+            document.removeEventListener("keypress", handleEnter);
+          }
+        });
+
+        // Focus on Play Again button
+        playAgainBtn.focus();
+      }
+
+      // Game state
+      let gameState = {
+        cowClicker: 0,
+        memoryMatches: 0,
+        quizScore: 0,
+        totalScore: 0,
+        totalMilk: 0,
+        // Farm game state
+        milk: 0,
+        cows: 1,
+        milkPerClick: 1,
+        milkPerSecond: 0,
+        milkingUpgrades: 0,
+        cowUpgrades: 0,
+        farmUpgrades: 0,
+        milkingCost: 10,
+        cowCost: 50,
+        farmCost: 200,
+        // Runner game state
+        runnerActive: false,
+        runnerDistance: 0,
+        runnerBottles: 0,
+        cowY: 0,
+        cowJumping: false,
+        gameSpeed: 4,
+        obstacles: [],
+        bottles: [],
+        gameLoop: null,
+      };
+
+      // Cow Farm Empire Game
+      document
+        .getElementById("cowClickerBtn")
+        .addEventListener("click", function () {
+          gameState.milk += gameState.milkPerClick;
+          gameState.cowClicker = gameState.milk; // Keep compatibility
+          gameState.totalMilk = gameState.milk;
+          updateFarmDisplay();
+
+          // Add click animation with floating milk
+          this.style.transform = "scale(0.95)";
+          setTimeout(() => {
+            this.style.transform = "scale(1)";
+          }, 100);
+
+          // Create floating milk animation
+          createFloatingMilk(this);
+        });
+
+      function createFloatingMilk(button) {
+        const milk = document.createElement("div");
+        milk.textContent = `+${gameState.milkPerClick} 🥛`;
+        milk.className =
+          "absolute text-green-600 font-bold pointer-events-none";
+        milk.style.left = Math.random() * 100 + "px";
+        milk.style.top = "0px";
+        milk.style.animation = "float-up 1s ease-out forwards";
+        button.parentElement.style.position = "relative";
+        button.parentElement.appendChild(milk);
+
+        setTimeout(() => milk.remove(), 1000);
+      }
+
+      // Add floating animation CSS
+      const style = document.createElement("style");
+      style.textContent = `
             @keyframes float-up {
                 0% { opacity: 1; transform: translateY(0px); }
                 100% { opacity: 0; transform: translateY(-50px); }
             }
         `;
-        document.head.appendChild(style);
+      document.head.appendChild(style);
 
-        // Upgrade buttons
-        document.getElementById('buyMilkingUpgrade').addEventListener('click', function() {
-            if (gameState.milk >= gameState.milkingCost) {
-                gameState.milk -= gameState.milkingCost;
-                gameState.milkingUpgrades++;
-                gameState.milkPerClick++;
-                gameState.milkingCost = Math.floor(gameState.milkingCost * 1.5);
-                updateFarmDisplay();
+      // Upgrade buttons
+      document
+        .getElementById("buyMilkingUpgrade")
+        .addEventListener("click", async function () {
+          if (gameState.milk >= gameState.milkingCost) {
+            gameState.milk -= gameState.milkingCost;
+            gameState.milkingUpgrades++;
+            gameState.milkPerClick++;
+            gameState.milkingCost = Math.floor(gameState.milkingCost * 1.5);
+            updateFarmDisplay();
+
+            // Save to database
+            if (playerName && playerName !== "Anonymous Cow Hero") {
+              await savePlayerData(playerName, gameState);
             }
+          }
         });
 
-        document.getElementById('buyCowUpgrade').addEventListener('click', function() {
-            if (gameState.milk >= gameState.cowCost) {
-                gameState.milk -= gameState.cowCost;
-                gameState.cowUpgrades++;
-                gameState.cows++;
-                gameState.milkPerSecond += Math.pow(2, gameState.farmUpgrades);
-                gameState.cowCost = Math.floor(gameState.cowCost * 1.8);
-                updateFarmDisplay();
+      document
+        .getElementById("buyCowUpgrade")
+        .addEventListener("click", async function () {
+          if (gameState.milk >= gameState.cowCost) {
+            gameState.milk -= gameState.cowCost;
+            gameState.cowUpgrades++;
+            gameState.cows++;
+            gameState.milkPerSecond += Math.pow(2, gameState.farmUpgrades);
+            gameState.cowCost = Math.floor(gameState.cowCost * 1.8);
+            updateFarmDisplay();
+
+            // Save to database
+            if (playerName && playerName !== "Anonymous Cow Hero") {
+              await savePlayerData(playerName, gameState);
             }
+          }
         });
 
-        document.getElementById('buyFarmUpgrade').addEventListener('click', function() {
-            if (gameState.milk >= gameState.farmCost) {
-                gameState.milk -= gameState.farmCost;
-                gameState.farmUpgrades++;
-                // Double the production of all cows
-                gameState.milkPerSecond = gameState.cowUpgrades * Math.pow(2, gameState.farmUpgrades);
-                gameState.farmCost = Math.floor(gameState.farmCost * 3);
-                updateFarmDisplay();
+      document
+        .getElementById("buyFarmUpgrade")
+        .addEventListener("click", async function () {
+          if (gameState.milk >= gameState.farmCost) {
+            gameState.milk -= gameState.farmCost;
+            gameState.farmUpgrades++;
+            // Double the production of all cows
+            gameState.milkPerSecond =
+              gameState.cowUpgrades * Math.pow(2, gameState.farmUpgrades);
+            gameState.farmCost = Math.floor(gameState.farmCost * 3);
+            updateFarmDisplay();
+
+            // Save to database
+            if (playerName && playerName !== "Anonymous Cow Hero") {
+              await savePlayerData(playerName, gameState);
             }
+          }
         });
 
-        function updateFarmDisplay() {
-            document.getElementById('cowClickerScore').textContent = Math.floor(gameState.milk);
-            document.getElementById('totalMilk').textContent = Math.floor(gameState.milk);
-            document.getElementById('cowCount').textContent = gameState.cows;
-            document.getElementById('milkPerClick').textContent = gameState.milkPerClick;
-            document.getElementById('milkPerSecond').textContent = gameState.milkPerSecond;
-            document.getElementById('milkingCost').textContent = gameState.milkingCost;
-            document.getElementById('cowCost').textContent = gameState.cowCost;
-            document.getElementById('farmCost').textContent = gameState.farmCost;
-            
-            // Update button states
-            document.getElementById('buyMilkingUpgrade').disabled = gameState.milk < gameState.milkingCost;
-            document.getElementById('buyCowUpgrade').disabled = gameState.milk < gameState.cowCost;
-            document.getElementById('buyFarmUpgrade').disabled = gameState.milk < gameState.farmCost;
-            
-            // Update button styles based on affordability
-            updateButtonStyle('buyMilkingUpgrade', gameState.milk >= gameState.milkingCost);
-            updateButtonStyle('buyCowUpgrade', gameState.milk >= gameState.cowCost);
-            updateButtonStyle('buyFarmUpgrade', gameState.milk >= gameState.farmCost);
+      function updateFarmDisplay() {
+        document.getElementById("cowClickerScore").textContent = Math.floor(
+          gameState.milk
+        );
+        document.getElementById("totalMilk").textContent = Math.floor(
+          gameState.milk
+        );
+        document.getElementById("cowCount").textContent = gameState.cows;
+        document.getElementById("milkPerClick").textContent =
+          gameState.milkPerClick;
+        document.getElementById("milkPerSecond").textContent =
+          gameState.milkPerSecond;
+        document.getElementById("milkingCost").textContent =
+          gameState.milkingCost;
+        document.getElementById("cowCost").textContent = gameState.cowCost;
+        document.getElementById("farmCost").textContent = gameState.farmCost;
+
+        // Update button states
+        document.getElementById("buyMilkingUpgrade").disabled =
+          gameState.milk < gameState.milkingCost;
+        document.getElementById("buyCowUpgrade").disabled =
+          gameState.milk < gameState.cowCost;
+        document.getElementById("buyFarmUpgrade").disabled =
+          gameState.milk < gameState.farmCost;
+
+        // Update button styles based on affordability
+        updateButtonStyle(
+          "buyMilkingUpgrade",
+          gameState.milk >= gameState.milkingCost
+        );
+        updateButtonStyle("buyCowUpgrade", gameState.milk >= gameState.cowCost);
+        updateButtonStyle(
+          "buyFarmUpgrade",
+          gameState.milk >= gameState.farmCost
+        );
+      }
+
+      function updateButtonStyle(buttonId, canAfford) {
+        const button = document.getElementById(buttonId);
+        if (canAfford) {
+          button.classList.remove("opacity-50", "cursor-not-allowed");
+        } else {
+          button.classList.add("opacity-50", "cursor-not-allowed");
         }
+      }
 
-        function updateButtonStyle(buttonId, canAfford) {
-            const button = document.getElementById(buttonId);
-            if (canAfford) {
-                button.classList.remove('opacity-50', 'cursor-not-allowed');
-            } else {
-                button.classList.add('opacity-50', 'cursor-not-allowed');
-            }
+      // Passive milk generation
+      setInterval(() => {
+        if (gameState.milkPerSecond > 0) {
+          gameState.milk += gameState.milkPerSecond / 10; // Update 10 times per second for smooth animation
+          gameState.totalMilk = gameState.milk;
+          updateFarmDisplay();
         }
+      }, 100);
 
-        // Passive milk generation
-        setInterval(() => {
-            if (gameState.milkPerSecond > 0) {
-                gameState.milk += gameState.milkPerSecond / 10; // Update 10 times per second for smooth animation
-                gameState.totalMilk = gameState.milk;
-                updateFarmDisplay();
-            }
-        }, 100);
+      // Auto-save every 30 seconds
+      setInterval(async () => {
+        if (playerName && playerName !== "Anonymous Cow Hero") {
+          await savePlayerData(playerName, gameState);
+        }
+      }, 30000);
 
-        // Initialize farm display
-        updateFarmDisplay();
+      // Save on page unload
+      window.addEventListener("beforeunload", async () => {
+        if (playerName && playerName !== "Anonymous Cow Hero") {
+          await savePlayerData(playerName, gameState);
+        }
+      });
 
-        // Ninja Cow Runner Game
-        function startRunnerGame() {
-            gameState.runnerActive = true;
-            gameState.runnerDistance = 0;
-            gameState.runnerBottles = 0;
-            gameState.cowY = 0;
+      // Initialize farm display
+      updateFarmDisplay();
+
+      // Ninja Cow Runner Game
+      function startRunnerGame() {
+        gameState.runnerActive = true;
+        gameState.runnerDistance = 0;
+        gameState.runnerBottles = 0;
+        gameState.cowY = 0;
+        gameState.cowJumping = false;
+        gameState.gameSpeed = 4;
+        gameState.obstacles = [];
+        gameState.bottles = [];
+
+        document.getElementById("startRunnerBtn").textContent =
+          "Game Running...";
+        document.getElementById("startRunnerBtn").disabled = true;
+
+        updateRunnerDisplay();
+
+        gameState.gameLoop = setInterval(runnerGameLoop, 50);
+      }
+
+      function runnerGameLoop() {
+        if (!gameState.runnerActive) return;
+
+        // Update distance
+        gameState.runnerDistance += gameState.gameSpeed;
+
+        // Increase speed gradually
+        gameState.gameSpeed += 0.003;
+
+        // Handle cow jumping
+        if (gameState.cowJumping) {
+          gameState.cowY += 12;
+          if (gameState.cowY >= 100) {
             gameState.cowJumping = false;
-            gameState.gameSpeed = 4;
-            gameState.obstacles = [];
-            gameState.bottles = [];
-            
-            document.getElementById('startRunnerBtn').textContent = 'Game Running...';
-            document.getElementById('startRunnerBtn').disabled = true;
-            
-            updateRunnerDisplay();
-            
-            gameState.gameLoop = setInterval(runnerGameLoop, 50);
+          }
+        } else if (gameState.cowY > 0) {
+          gameState.cowY -= 10;
+          if (gameState.cowY < 0) gameState.cowY = 0;
         }
 
-        function runnerGameLoop() {
-            if (!gameState.runnerActive) return;
-            
-            // Update distance
-            gameState.runnerDistance += gameState.gameSpeed;
-            
-            // Increase speed gradually
-            gameState.gameSpeed += 0.003;
-            
-            // Handle cow jumping
-            if (gameState.cowJumping) {
-                gameState.cowY += 12;
-                if (gameState.cowY >= 100) {
-                    gameState.cowJumping = false;
-                }
-            } else if (gameState.cowY > 0) {
-                gameState.cowY -= 10;
-                if (gameState.cowY < 0) gameState.cowY = 0;
-            }
-            
-            // Spawn obstacles
-            if (Math.random() < 0.02) {
-                gameState.obstacles.push({
-                    x: 400,
-                    y: 0,
-                    type: Math.random() < 0.5 ? '🎋' : '🌿'
-                });
-            }
-            
-            // Spawn milk bottles
-            if (Math.random() < 0.015) {
-                gameState.bottles.push({
-                    x: 400,
-                    y: Math.random() < 0.5 ? 20 : 60
-                });
-            }
-            
-            // Move and check obstacles
-            gameState.obstacles = gameState.obstacles.filter(obstacle => {
-                obstacle.x -= gameState.gameSpeed * 2;
-                
-                // Check collision with cow
-                if (obstacle.x < 60 && obstacle.x > 20 && gameState.cowY < 30) {
-                    endRunnerGame();
-                    return false;
-                }
-                
-                return obstacle.x > -50;
-            });
-            
-            // Move and check bottles
-            gameState.bottles = gameState.bottles.filter(bottle => {
-                bottle.x -= gameState.gameSpeed * 2;
-                
-                // Check collection
-                if (bottle.x < 60 && bottle.x > 20 && 
-                    Math.abs(bottle.y - gameState.cowY) < 30) {
-                    gameState.runnerBottles++;
-                    gameState.totalMilk++;
-                    return false;
-                }
-                
-                return bottle.x > -50;
-            });
-            
-            updateRunnerDisplay();
-            renderRunnerGame();
+        // Spawn obstacles
+        if (Math.random() < 0.02) {
+          gameState.obstacles.push({
+            x: 400,
+            y: 0,
+            type: Math.random() < 0.5 ? "🎋" : "🌿",
+          });
         }
 
-        function renderRunnerGame() {
-            const gameElements = document.getElementById('gameElements');
-            const ninjaCow = document.getElementById('ninjaCow');
-            
-            // Update cow position
-            ninjaCow.style.bottom = (16 + gameState.cowY) + 'px';
-            ninjaCow.textContent = '🐄';
-            ninjaCow.style.transform = 'scaleX(-1)'; // Face right direction (running forward)
-            
-            // Clear and redraw elements
-            gameElements.innerHTML = '';
-            
-            // Draw bamboo background
-            for (let i = 0; i < 5; i++) {
-                const bamboo = document.createElement('div');
-                bamboo.textContent = '🎋';
-                bamboo.className = 'absolute text-2xl opacity-30';
-                bamboo.style.left = (i * 100 - (gameState.runnerDistance % 100)) + 'px';
-                bamboo.style.bottom = '10px';
-                gameElements.appendChild(bamboo);
-            }
-            
-            // Draw obstacles
-            gameState.obstacles.forEach(obstacle => {
-                const obstacleEl = document.createElement('div');
-                obstacleEl.textContent = obstacle.type;
-                obstacleEl.className = 'absolute text-3xl';
-                obstacleEl.style.left = obstacle.x + 'px';
-                obstacleEl.style.bottom = (obstacle.y + 16) + 'px';
-                gameElements.appendChild(obstacleEl);
-            });
-            
-            // Draw bottles
-            gameState.bottles.forEach(bottle => {
-                const bottleEl = document.createElement('div');
-                bottleEl.textContent = '🥛';
-                bottleEl.className = 'absolute text-2xl';
-                bottleEl.style.left = bottle.x + 'px';
-                bottleEl.style.bottom = (bottle.y + 16) + 'px';
-                gameElements.appendChild(bottleEl);
-            });
+        // Spawn milk bottles
+        if (Math.random() < 0.015) {
+          gameState.bottles.push({
+            x: 400,
+            y: Math.random() < 0.5 ? 20 : 60,
+          });
         }
 
-        function updateRunnerDisplay() {
-            document.getElementById('runnerDistance').textContent = Math.floor(gameState.runnerDistance / 10);
-            document.getElementById('runnerBottles').textContent = gameState.runnerBottles;
-            document.getElementById('totalMilk').textContent = gameState.totalMilk;
-        }
+        // Move and check obstacles
+        gameState.obstacles = gameState.obstacles.filter((obstacle) => {
+          obstacle.x -= gameState.gameSpeed * 2;
 
-        function endRunnerGame() {
-            gameState.runnerActive = false;
-            clearInterval(gameState.gameLoop);
-            
-            const score = Math.floor(gameState.runnerDistance / 10) + (gameState.runnerBottles * 10);
-            gameState.totalScore += score;
-            document.getElementById('totalScore').textContent = gameState.totalScore;
-            
-            document.getElementById('startRunnerBtn').textContent = 'Play Again';
-            document.getElementById('startRunnerBtn').disabled = false;
-            
-            setTimeout(() => {
-                const distance = Math.floor(gameState.runnerDistance / 10);
-                let title = '';
-                let message = '';
-                let emoji = '';
-                
-                if (distance >= 100) {
-                    title = `Congratulations ${playerName}!`;
-                    message = `You're a true Ninja Cow master!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!`;
-                    emoji = '🎉';
-                } else if (distance >= 50) {
-                    title = `Great job ${playerName}!`;
-                    message = `You're getting the hang of it!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!`;
-                    emoji = '👏';
-                } else {
-                    title = `Nice try ${playerName}!`;
-                    message = `Keep practicing to become a Ninja Cow!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!`;
-                    emoji = '🐄';
-                }
-                
-                showQuizCompletionDialog(title, message, emoji);
-            }, 100);
-        }
+          // Check collision with cow
+          if (obstacle.x < 60 && obstacle.x > 20 && gameState.cowY < 30) {
+            endRunnerGame();
+            return false;
+          }
 
-        function jumpCow() {
-            if (gameState.runnerActive && !gameState.cowJumping && gameState.cowY === 0) {
-                gameState.cowJumping = true;
-            }
-        }
-
-        // Runner game event listeners
-        document.getElementById('startRunnerBtn').addEventListener('click', startRunnerGame);
-        document.getElementById('jumpBtn').addEventListener('click', jumpCow);
-        
-        // Keyboard controls
-        document.addEventListener('keydown', function(e) {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                jumpCow();
-            }
+          return obstacle.x > -50;
         });
 
-        // Memory Game
-        const cowEmojis = ['🐄', '🥛', '🌾', '🐮', '🧀', '🍼', '🌱', '🏠'];
-        let memoryCards = [...cowEmojis, ...cowEmojis];
-        let flippedCards = [];
-        let matchedPairs = 0;
+        // Move and check bottles
+        gameState.bottles = gameState.bottles.filter((bottle) => {
+          bottle.x -= gameState.gameSpeed * 2;
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
+          // Check collection
+          if (
+            bottle.x < 60 &&
+            bottle.x > 20 &&
+            Math.abs(bottle.y - gameState.cowY) < 30
+          ) {
+            gameState.runnerBottles++;
+            gameState.totalMilk++;
+            return false;
+          }
 
-        function createMemoryGame() {
-            shuffleArray(memoryCards);
-            const gameContainer = document.getElementById('memoryGame');
-            gameContainer.innerHTML = '';
-            
-            memoryCards.forEach((emoji, index) => {
-                const card = document.createElement('button');
-                card.className = 'bg-green-200 hover:bg-green-300 rounded-lg h-12 w-12 text-xl font-bold transition-all duration-200';
-                card.dataset.emoji = emoji;
-                card.dataset.index = index;
-                card.textContent = '?';
-                card.addEventListener('click', flipCard);
-                gameContainer.appendChild(card);
-            });
-        }
-
-        function flipCard(e) {
-            const card = e.target;
-            if (flippedCards.length < 2 && !card.classList.contains('matched') && !flippedCards.includes(card)) {
-                card.textContent = card.dataset.emoji;
-                card.classList.add('bg-yellow-200');
-                flippedCards.push(card);
-                
-                if (flippedCards.length === 2) {
-                    setTimeout(checkMatch, 1000);
-                }
-            }
-        }
-
-        function checkMatch() {
-            const [card1, card2] = flippedCards;
-            if (card1.dataset.emoji === card2.dataset.emoji) {
-                card1.classList.add('matched', 'bg-green-400');
-                card2.classList.add('matched', 'bg-green-400');
-                matchedPairs++;
-                gameState.memoryMatches = matchedPairs;
-                document.getElementById('memoryScore').textContent = matchedPairs;
-                
-                if (matchedPairs === 8) {
-                    gameState.totalScore += 100;
-                    document.getElementById('totalScore').textContent = gameState.totalScore;
-                    setTimeout(() => showCustomAlert(`Fantastic ${playerName}!`, `You matched all the cow pairs!\nYour memory is udderly amazing!`, '🎉'), 500);
-                }
-            } else {
-                card1.textContent = '?';
-                card2.textContent = '?';
-                card1.classList.remove('bg-yellow-200');
-                card2.classList.remove('bg-yellow-200');
-            }
-            flippedCards = [];
-        }
-
-        document.getElementById('resetMemory').addEventListener('click', function() {
-            matchedPairs = 0;
-            gameState.memoryMatches = 0;
-            document.getElementById('memoryScore').textContent = 0;
-            createMemoryGame();
+          return bottle.x > -50;
         });
 
-        // Quiz Game
-        const quizQuestions = [
-            {
-                question: "How many stomachs does a cow have?",
-                options: ["1", "2", "4", "6"],
-                correct: 2
-            },
-            {
-                question: "What sound do cows make?",
-                options: ["Woof", "Moo", "Meow", "Oink"],
-                correct: 1
-            },
-            {
-                question: "What do cows primarily eat?",
-                options: ["Meat", "Fish", "Grass", "Candy"],
-                correct: 2
-            },
-            {
-                question: "What is a baby cow called?",
-                options: ["Puppy", "Kitten", "Calf", "Chick"],
-                correct: 2
-            },
-            {
-                question: "How long do cows typically live?",
-                options: ["5-10 years", "15-20 years", "25-30 years", "50+ years"],
-                correct: 1
-            }
-        ];
+        updateRunnerDisplay();
+        renderRunnerGame();
+      }
 
-        let currentQuestionIndex = 0;
-        let quizAnswered = 0;
+      function renderRunnerGame() {
+        const gameElements = document.getElementById("gameElements");
+        const ninjaCow = document.getElementById("ninjaCow");
 
-        function displayQuestion() {
-            if (currentQuestionIndex < quizQuestions.length) {
-                const question = quizQuestions[currentQuestionIndex];
-                document.getElementById('quizQuestion').textContent = question.question;
-                
-                const optionsContainer = document.getElementById('quizOptions');
-                optionsContainer.innerHTML = '';
-                
-                question.options.forEach((option, index) => {
-                    const button = document.createElement('button');
-                    button.className = 'w-full bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200';
-                    button.textContent = option;
-                    button.addEventListener('click', () => selectAnswer(index));
-                    optionsContainer.appendChild(button);
-                });
-            } else {
-                // Update quiz display first
-                document.getElementById('quizQuestion').textContent = `Quiz Complete! Final Score: ${gameState.quizScore}/5`;
-                const playAgainBtn = document.createElement('button');
-                playAgainBtn.className = 'w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg';
-                playAgainBtn.textContent = 'Play Again';
-                playAgainBtn.addEventListener('click', resetQuiz);
-                document.getElementById('quizOptions').innerHTML = '';
-                document.getElementById('quizOptions').appendChild(playAgainBtn);
-                
-                // Show completion message after updating display
-                let title = '';
-                let message = '';
-                let emoji = '';
-                
-                if (gameState.quizScore === 5) {
-                    title = `Perfect score ${playerName}!`;
-                    message = `You're a true cow expert!\nFinal Score: ${gameState.quizScore}/5`;
-                    emoji = '🎉';
-                } else if (gameState.quizScore >= 3) {
-                    title = `Great job ${playerName}!`;
-                    message = `You know your cow facts!\nFinal Score: ${gameState.quizScore}/5`;
-                    emoji = '👏';
-                } else {
-                    title = `Nice try ${playerName}!`;
-                    message = `Keep learning about cows!\nFinal Score: ${gameState.quizScore}/5`;
-                    emoji = '🐄';
-                }
-                
-                showQuizCompletionDialog(title, message, emoji);
-            }
+        // Update cow position
+        ninjaCow.style.bottom = 16 + gameState.cowY + "px";
+        ninjaCow.textContent = "🐄";
+        ninjaCow.style.transform = "scaleX(-1)"; // Face right direction (running forward)
+
+        // Clear and redraw elements
+        gameElements.innerHTML = "";
+
+        // Draw bamboo background
+        for (let i = 0; i < 5; i++) {
+          const bamboo = document.createElement("div");
+          bamboo.textContent = "🎋";
+          bamboo.className = "absolute text-2xl opacity-30";
+          bamboo.style.left = i * 100 - (gameState.runnerDistance % 100) + "px";
+          bamboo.style.bottom = "10px";
+          gameElements.appendChild(bamboo);
         }
 
-        function selectAnswer(selectedIndex) {
-            const question = quizQuestions[currentQuestionIndex];
-            if (selectedIndex === question.correct) {
-                gameState.quizScore++;
-                gameState.totalScore += 20;
-                document.getElementById('quizScore').textContent = gameState.quizScore;
-                document.getElementById('totalScore').textContent = gameState.totalScore;
-            }
-            
-            currentQuestionIndex++;
-            setTimeout(displayQuestion, 1000);
+        // Draw obstacles
+        gameState.obstacles.forEach((obstacle) => {
+          const obstacleEl = document.createElement("div");
+          obstacleEl.textContent = obstacle.type;
+          obstacleEl.className = "absolute text-3xl";
+          obstacleEl.style.left = obstacle.x + "px";
+          obstacleEl.style.bottom = obstacle.y + 16 + "px";
+          gameElements.appendChild(obstacleEl);
+        });
+
+        // Draw bottles
+        gameState.bottles.forEach((bottle) => {
+          const bottleEl = document.createElement("div");
+          bottleEl.textContent = "🥛";
+          bottleEl.className = "absolute text-2xl";
+          bottleEl.style.left = bottle.x + "px";
+          bottleEl.style.bottom = bottle.y + 16 + "px";
+          gameElements.appendChild(bottleEl);
+        });
+      }
+
+      function updateRunnerDisplay() {
+        document.getElementById("runnerDistance").textContent = Math.floor(
+          gameState.runnerDistance / 10
+        );
+        document.getElementById("runnerBottles").textContent =
+          gameState.runnerBottles;
+        document.getElementById("totalMilk").textContent = gameState.totalMilk;
+      }
+
+      function endRunnerGame() {
+        gameState.runnerActive = false;
+        clearInterval(gameState.gameLoop);
+
+        const score =
+          Math.floor(gameState.runnerDistance / 10) +
+          gameState.runnerBottles * 10;
+        gameState.totalScore += score;
+        document.getElementById("totalScore").textContent =
+          gameState.totalScore;
+
+        document.getElementById("startRunnerBtn").textContent = "Play Again";
+        document.getElementById("startRunnerBtn").disabled = false;
+
+        setTimeout(() => {
+          const distance = Math.floor(gameState.runnerDistance / 10);
+          let title = "";
+          let message = "";
+          let emoji = "";
+
+          if (distance >= 100) {
+            title = `Congratulations ${playerName}!`;
+            message = `You're a true Ninja Cow master!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!`;
+            emoji = "🎉";
+          } else if (distance >= 50) {
+            title = `Great job ${playerName}!`;
+            message = `You're getting the hang of it!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!`;
+            emoji = "👏";
+          } else {
+            title = `Nice try ${playerName}!`;
+            message = `Keep practicing to become a Ninja Cow!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!`;
+            emoji = "🐄";
+          }
+
+          showQuizCompletionDialog(title, message, emoji);
+        }, 100);
+      }
+
+      function jumpCow() {
+        if (
+          gameState.runnerActive &&
+          !gameState.cowJumping &&
+          gameState.cowY === 0
+        ) {
+          gameState.cowJumping = true;
+        }
+      }
+
+      // Runner game event listeners
+      document
+        .getElementById("startRunnerBtn")
+        .addEventListener("click", startRunnerGame);
+      document.getElementById("jumpBtn").addEventListener("click", jumpCow);
+
+      // Keyboard controls
+      document.addEventListener("keydown", function (e) {
+        if (e.code === "Space") {
+          e.preventDefault();
+          jumpCow();
+        }
+      });
+
+      // Memory Game
+      const cowEmojis = ["🐄", "🥛", "🌾", "🐮", "🧀", "🍼", "🌱", "🏠"];
+      let memoryCards = [...cowEmojis, ...cowEmojis];
+      let flippedCards = [];
+      let matchedPairs = 0;
+
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      function createMemoryGame() {
+        shuffleArray(memoryCards);
+        const gameContainer = document.getElementById("memoryGame");
+        gameContainer.innerHTML = "";
+
+        memoryCards.forEach((emoji, index) => {
+          const card = document.createElement("button");
+          card.className =
+            "bg-green-200 hover:bg-green-300 rounded-lg h-12 w-12 text-xl font-bold transition-all duration-200";
+          card.dataset.emoji = emoji;
+          card.dataset.index = index;
+          card.textContent = "?";
+          card.addEventListener("click", flipCard);
+          gameContainer.appendChild(card);
+        });
+      }
+
+      function flipCard(e) {
+        const card = e.target;
+        if (
+          flippedCards.length < 2 &&
+          !card.classList.contains("matched") &&
+          !flippedCards.includes(card)
+        ) {
+          card.textContent = card.dataset.emoji;
+          card.classList.add("bg-yellow-200");
+          flippedCards.push(card);
+
+          if (flippedCards.length === 2) {
+            setTimeout(checkMatch, 1000);
+          }
+        }
+      }
+
+      function checkMatch() {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.emoji === card2.dataset.emoji) {
+          card1.classList.add("matched", "bg-green-400");
+          card2.classList.add("matched", "bg-green-400");
+          matchedPairs++;
+          gameState.memoryMatches = matchedPairs;
+          document.getElementById("memoryScore").textContent = matchedPairs;
+
+          if (matchedPairs === 8) {
+            gameState.totalScore += 100;
+            document.getElementById("totalScore").textContent =
+              gameState.totalScore;
+            setTimeout(
+              () =>
+                showCustomAlert(
+                  `Fantastic ${playerName}!`,
+                  `You matched all the cow pairs!\nYour memory is udderly amazing!`,
+                  "🎉"
+                ),
+              500
+            );
+          }
+        } else {
+          card1.textContent = "?";
+          card2.textContent = "?";
+          card1.classList.remove("bg-yellow-200");
+          card2.classList.remove("bg-yellow-200");
+        }
+        flippedCards = [];
+      }
+
+      document
+        .getElementById("resetMemory")
+        .addEventListener("click", function () {
+          matchedPairs = 0;
+          gameState.memoryMatches = 0;
+          document.getElementById("memoryScore").textContent = 0;
+          createMemoryGame();
+        });
+
+      // Quiz Game
+      const quizQuestions = [
+        {
+          question: "How many stomachs does a cow have?",
+          options: ["1", "2", "4", "6"],
+          correct: 2,
+        },
+        {
+          question: "What sound do cows make?",
+          options: ["Woof", "Moo", "Meow", "Oink"],
+          correct: 1,
+        },
+        {
+          question: "What do cows primarily eat?",
+          options: ["Meat", "Fish", "Grass", "Candy"],
+          correct: 2,
+        },
+        {
+          question: "What is a baby cow called?",
+          options: ["Puppy", "Kitten", "Calf", "Chick"],
+          correct: 2,
+        },
+        {
+          question: "How long do cows typically live?",
+          options: ["5-10 years", "15-20 years", "25-30 years", "50+ years"],
+          correct: 1,
+        },
+      ];
+
+      let currentQuestionIndex = 0;
+      let quizAnswered = 0;
+
+      function displayQuestion() {
+        if (currentQuestionIndex < quizQuestions.length) {
+          const question = quizQuestions[currentQuestionIndex];
+          document.getElementById("quizQuestion").textContent =
+            question.question;
+
+          const optionsContainer = document.getElementById("quizOptions");
+          optionsContainer.innerHTML = "";
+
+          question.options.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.className =
+              "w-full bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200";
+            button.textContent = option;
+            button.addEventListener("click", () => selectAnswer(index));
+            optionsContainer.appendChild(button);
+          });
+        } else {
+          // Update quiz display first
+          document.getElementById(
+            "quizQuestion"
+          ).textContent = `Quiz Complete! Final Score: ${gameState.quizScore}/5`;
+          const playAgainBtn = document.createElement("button");
+          playAgainBtn.className =
+            "w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg";
+          playAgainBtn.textContent = "Play Again";
+          playAgainBtn.addEventListener("click", resetQuiz);
+          document.getElementById("quizOptions").innerHTML = "";
+          document.getElementById("quizOptions").appendChild(playAgainBtn);
+
+          // Show completion message after updating display
+          let title = "";
+          let message = "";
+          let emoji = "";
+
+          if (gameState.quizScore === 5) {
+            title = `Perfect score ${playerName}!`;
+            message = `You're a true cow expert!\nFinal Score: ${gameState.quizScore}/5`;
+            emoji = "🎉";
+          } else if (gameState.quizScore >= 3) {
+            title = `Great job ${playerName}!`;
+            message = `You know your cow facts!\nFinal Score: ${gameState.quizScore}/5`;
+            emoji = "👏";
+          } else {
+            title = `Nice try ${playerName}!`;
+            message = `Keep learning about cows!\nFinal Score: ${gameState.quizScore}/5`;
+            emoji = "🐄";
+          }
+
+          showQuizCompletionDialog(title, message, emoji);
+        }
+      }
+
+      function selectAnswer(selectedIndex) {
+        const question = quizQuestions[currentQuestionIndex];
+        if (selectedIndex === question.correct) {
+          gameState.quizScore++;
+          gameState.totalScore += 20;
+          document.getElementById("quizScore").textContent =
+            gameState.quizScore;
+          document.getElementById("totalScore").textContent =
+            gameState.totalScore;
         }
 
-        window.resetQuiz = function() {
-            currentQuestionIndex = 0;
-            gameState.quizScore = 0;
-            document.getElementById('quizScore').textContent = 0;
-            displayQuestion();
-        }
+        currentQuestionIndex++;
+        setTimeout(displayQuestion, 1000);
+      }
 
-        // Initialize games
-        createMemoryGame();
+      window.resetQuiz = function () {
+        currentQuestionIndex = 0;
+        gameState.quizScore = 0;
+        document.getElementById("quizScore").textContent = 0;
         displayQuestion();
+      };
+
+      // Initialize games
+      createMemoryGame();
+      displayQuestion();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9719458d36728013',t:'MTc1NTYwMjUzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'9719458d36728013',t:'MTc1NTYwMjUzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
 </html>
