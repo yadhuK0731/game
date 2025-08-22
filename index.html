@@ -368,6 +368,7 @@
             cow_cost: gameStateData.cowCost,
             farm_cost: gameStateData.farmCost,
             total_milk_collected: Math.floor(gameStateData.totalMilk),
+            high_score: gameStateData.highScore || 0,
           };
 
           const { data, error } = await supabase
@@ -405,6 +406,7 @@
               cow_cost: 50,
               farm_cost: 200,
               total_milk_collected: 0,
+              high_score: 0,
             })
             .select()
             .single();
@@ -492,11 +494,13 @@
               gameState.cowCost = existingData.cow_cost;
               gameState.farmCost = existingData.farm_cost;
               gameState.totalMilk = existingData.total_milk_collected;
+              gameState.highScore = existingData.high_score || 0;
 
               document.getElementById(
                 "playerGreeting"
               ).textContent = `Welcome back, ${playerName}! 🎉`;
               updateFarmDisplay();
+              updateHighScoreDisplay();
             } else {
               // Create new player
               const newPlayerData = await createNewPlayer(playerName);
@@ -642,6 +646,7 @@
         quizScore: 0,
         totalScore: 0,
         totalMilk: 0,
+        highScore: 0,
         // Farm game state
         milk: 0,
         cows: 1,
@@ -809,7 +814,9 @@
         }
       }
 
-      // Passive milk generation
+      function updateHighScoreDisplay() {
+        document.getElementById("totalScore").textContent = gameState.highScore;
+      } // Passive milk generation
       setInterval(() => {
         if (gameState.milkPerSecond > 0) {
           gameState.milk += gameState.milkPerSecond / 10; // Update 10 times per second for smooth animation
@@ -986,9 +993,19 @@
         const score =
           Math.floor(gameState.runnerDistance / 10) +
           gameState.runnerBottles * 10;
-        gameState.totalScore += score;
-        document.getElementById("totalScore").textContent =
-          gameState.totalScore;
+
+        // Check if this is a new high score
+        let isNewHighScore = false;
+        if (score > gameState.highScore) {
+          gameState.highScore = score;
+          isNewHighScore = true;
+          updateHighScoreDisplay();
+
+          // Save the new high score to database
+          if (playerName && playerName !== "Anonymous Cow Hero") {
+            savePlayerData(playerName, gameState);
+          }
+        }
 
         document.getElementById("startRunnerBtn").textContent = "Play Again";
         document.getElementById("startRunnerBtn").disabled = false;
@@ -999,17 +1016,21 @@
           let message = "";
           let emoji = "";
 
-          if (distance >= 100) {
+          if (isNewHighScore) {
+            title = `🎉 NEW HIGH SCORE! 🎉`;
+            message = `Amazing work ${playerName}!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nNew High Score: ${score} points!`;
+            emoji = "🏆";
+          } else if (distance >= 100) {
             title = `Congratulations ${playerName}!`;
-            message = `You're a true Ninja Cow master!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!`;
+            message = `You're a true Ninja Cow master!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!\nHigh Score: ${gameState.highScore}`;
             emoji = "🎉";
           } else if (distance >= 50) {
             title = `Great job ${playerName}!`;
-            message = `You're getting the hang of it!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!`;
+            message = `You're getting the hang of it!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!\nHigh Score: ${gameState.highScore}`;
             emoji = "👏";
           } else {
             title = `Nice try ${playerName}!`;
-            message = `Keep practicing to become a Ninja Cow!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!`;
+            message = `Keep practicing to become a Ninja Cow!\n\nDistance: ${distance}m\nBottles: ${gameState.runnerBottles}\nScore: ${score} points!\nHigh Score: ${gameState.highScore}`;
             emoji = "🐄";
           }
 
@@ -1098,9 +1119,6 @@
           document.getElementById("memoryScore").textContent = matchedPairs;
 
           if (matchedPairs === 8) {
-            gameState.totalScore += 100;
-            document.getElementById("totalScore").textContent =
-              gameState.totalScore;
             setTimeout(
               () =>
                 showCustomAlert(
@@ -1218,11 +1236,8 @@
         const question = quizQuestions[currentQuestionIndex];
         if (selectedIndex === question.correct) {
           gameState.quizScore++;
-          gameState.totalScore += 20;
           document.getElementById("quizScore").textContent =
             gameState.quizScore;
-          document.getElementById("totalScore").textContent =
-            gameState.totalScore;
         }
 
         currentQuestionIndex++;
@@ -1239,6 +1254,7 @@
       // Initialize games
       createMemoryGame();
       displayQuestion();
+      updateHighScoreDisplay();
     </script>
     <script>
       (function () {

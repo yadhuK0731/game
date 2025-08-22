@@ -17,7 +17,7 @@
 2. Go to SQL Editor in your Supabase dashboard
 3. Copy and paste the following SQL:
 
-```sql
+````sql
 -- Create players table to store game progress
 CREATE TABLE players (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -33,12 +33,16 @@ CREATE TABLE players (
   cow_cost INTEGER DEFAULT 50,
   farm_cost INTEGER DEFAULT 200,
   total_milk_collected BIGINT DEFAULT 0,
+  high_score INTEGER DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Create an index on player_name for faster lookups
 CREATE INDEX idx_players_name ON players(player_name);
+
+-- Create an index on high_score for leaderboards
+CREATE INDEX idx_players_high_score ON players(high_score DESC);
 
 -- Create a function to update the updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -62,9 +66,7 @@ ALTER TABLE players ENABLE ROW LEVEL SECURITY;
 -- Note: In production, you might want more restrictive policies
 CREATE POLICY "Allow all operations on players" ON players
     FOR ALL USING (true) WITH CHECK (true);
-```
-
-4. Click "Run" to execute the SQL
+```4. Click "Run" to execute the SQL
 
 ## Step 3: Get Credentials
 
@@ -81,7 +83,7 @@ CREATE POLICY "Allow all operations on players" ON players
 ```javascript
 const SUPABASE_URL = "YOUR_SUPABASE_URL";
 const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-```
+````
 
 3. Replace with your actual values:
 
@@ -105,6 +107,8 @@ const SUPABASE_ANON_KEY = "your-anon-key-here";
 - ✅ Save on page unload
 - ✅ Total milk collected tracking
 - ✅ All farm upgrades and costs preserved
+- ✅ High Score system based on Ninja Cow Runner only
+- ✅ New high score notifications and database storage
 
 ## Database Schema
 
@@ -120,7 +124,17 @@ The `players` table stores:
 - `farm_upgrades`: Number of farm upgrades purchased
 - `milking_cost`, `cow_cost`, `farm_cost`: Current upgrade costs
 - `total_milk_collected`: Lifetime milk collected
+- `high_score`: Best Ninja Cow Runner score (distance + bottles\*10)
 - `created_at`, `updated_at`: Timestamps
+
+## High Score System
+
+- **Only Ninja Cow Runner game affects high score**
+- Score calculation: `(distance in meters) + (bottles collected × 10)`
+- High score only updates when a better score is achieved
+- Shows special "NEW HIGH SCORE!" message when beaten
+- Memory and Quiz games no longer affect the high score display
+- High scores are automatically saved to database
 
 ## Security Notes
 
@@ -130,7 +144,7 @@ The `players` table stores:
 
 ## Future Enhancements
 
-- Add leaderboards
-- Implement proper high score system
+- Add leaderboards (already have high_score index for this)
 - Add achievements system
 - Store other mini-game statistics
+- Implement proper user authentication for production
