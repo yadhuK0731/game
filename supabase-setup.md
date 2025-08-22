@@ -109,13 +109,15 @@ const SUPABASE_ANON_KEY = "your-anon-key-here";
 - ✅ All farm upgrades and costs preserved
 - ✅ High Score system based on Ninja Cow Runner only
 - ✅ New high score notifications and database storage
+- ✅ Separated current milk from total milk collected
+- ✅ Total milk collected includes milk from all sources (cow farm + runner bottles)
 
 ## Database Schema
 
 The `players` table stores:
 
 - `player_name`: Unique player identifier (max 20 chars)
-- `milk`: Current milk amount
+- `milk`: Current spendable milk amount (decreases when buying upgrades)
 - `cows`: Number of cows owned
 - `milk_per_click`: Milk gained per click
 - `milk_per_second`: Passive milk generation
@@ -123,7 +125,7 @@ The `players` table stores:
 - `cow_upgrades`: Number of cow upgrades purchased
 - `farm_upgrades`: Number of farm upgrades purchased
 - `milking_cost`, `cow_cost`, `farm_cost`: Current upgrade costs
-- `total_milk_collected`: Lifetime milk collected
+- `total_milk_collected`: Lifetime milk collected (never decreases, includes cow farm + runner bottles)
 - `high_score`: Best Ninja Cow Runner score (distance + bottles\*10)
 - `created_at`, `updated_at`: Timestamps
 

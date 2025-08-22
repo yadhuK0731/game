@@ -675,8 +675,8 @@
         .getElementById("cowClickerBtn")
         .addEventListener("click", function () {
           gameState.milk += gameState.milkPerClick;
+          gameState.totalMilk += gameState.milkPerClick;
           gameState.cowClicker = gameState.milk; // Keep compatibility
-          gameState.totalMilk = gameState.milk;
           updateFarmDisplay();
 
           // Add click animation with floating milk
@@ -773,7 +773,7 @@
           gameState.milk
         );
         document.getElementById("totalMilk").textContent = Math.floor(
-          gameState.milk
+          gameState.totalMilk
         );
         document.getElementById("cowCount").textContent = gameState.cows;
         document.getElementById("milkPerClick").textContent =
@@ -819,8 +819,9 @@
       } // Passive milk generation
       setInterval(() => {
         if (gameState.milkPerSecond > 0) {
-          gameState.milk += gameState.milkPerSecond / 10; // Update 10 times per second for smooth animation
-          gameState.totalMilk = gameState.milk;
+          const milkGenerated = gameState.milkPerSecond / 10;
+          gameState.milk += milkGenerated; // Update 10 times per second for smooth animation
+          gameState.totalMilk += milkGenerated;
           updateFarmDisplay();
         }
       }, 100);
@@ -1000,11 +1001,11 @@
           gameState.highScore = score;
           isNewHighScore = true;
           updateHighScoreDisplay();
+        }
 
-          // Save the new high score to database
-          if (playerName && playerName !== "Anonymous Cow Hero") {
-            savePlayerData(playerName, gameState);
-          }
+        // Always save data after runner game to update totalMilk from collected bottles
+        if (playerName && playerName !== "Anonymous Cow Hero") {
+          savePlayerData(playerName, gameState);
         }
 
         document.getElementById("startRunnerBtn").textContent = "Play Again";
